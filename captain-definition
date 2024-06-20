@@ -10,7 +10,7 @@
       "ENV NODE_ENV production",
       "ENV PORT 80",
       "EXPOSE 80",
-      "RUN npm run build -- --port 80",
+      "RUN npm run build -- --port 3001",
       "CMD [ \"node\", \"./dist/server/entry.mjs\" ]"
   ]
 }
