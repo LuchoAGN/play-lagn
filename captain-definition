@@ -10,7 +10,7 @@
       "ENV NODE_ENV production",
       "ENV PORT 80",
       "EXPOSE 80",
-      "CMD [ \"npm\", \"run\", \"build\"]",
-      "CMD [ \"HOST=0.0.0.0\", \"PORT=80\", \"node\", \"./dist/server/entry.mjs\"]"
+      "CMD [ \"npm\", \"run\", \"build\", \"--\", \"--port\", \"80\" ]",
+      "CMD [ \"node\", \"./dist/server/entry.mjs\" ]"
   ]
 }
