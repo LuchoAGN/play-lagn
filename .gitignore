@@ -22,4 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
-public/music
+public/music/3
+public/music/4
+public/music/5
