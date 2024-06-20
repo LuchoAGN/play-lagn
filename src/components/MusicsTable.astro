@@ -1,0 +1,15 @@
+---
+import Time from '@/icons/Time.astro'
+import { type Song } from '@/lib/data'
+import { MusicTablePlaySong } from './react/MusicTablePlaySong' 
+
+interface Props{
+    songs: Song[],
+    playlist_id: string|undefined
+}
+
+const { songs, playlist_id } = Astro.props
+---
+
+<MusicTablePlaySong songs={songs}, playlist_id={playlist_id} client:load />
+    
