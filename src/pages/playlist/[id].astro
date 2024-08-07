@@ -11,6 +11,29 @@ const { id } = Astro.params
 const playlist = allPlaylists.find(playlist => playlist.id === id)
 const playlistSongs = songs.filter(song => song.albumId ===  playlist?.albumId)
 
+function timeToSeconds(time: string): number {
+    const parts = time.split(':');
+    const minutes = parseInt(parts[0], 10);
+    const seconds = parseInt(parts[1], 10);
+    return minutes * 60 + seconds;
+}
+
+function secondsToTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    
+    if (hours > 0) {
+        return `${hours}h ${minutes}m`;
+    } else {
+        return `${minutes}m ${remainingSeconds}s`;
+    }
+}
+
+const durations: string[] = playlistSongs.map(song => song.duration);
+const totalSeconds: number = durations.reduce((total, time) => total + timeToSeconds(time), 0);
+const totalTime: string = secondsToTime(totalSeconds);
+
 ---
 
 <Layout title="Play LAGN">
@@ -46,7 +69,7 @@ const playlistSongs = songs.filter(song => song.albumId ===  playlist?.albumId)
                             <span>{playlist?.artists.join(", ")}</span>
                         </div>
                         <p class="mt-1">
-                            <span class="text-white">{playlistSongs.length} canciones</span>, 3 h aproximadamente
+                            <span class="text-white">{playlistSongs.length} canciones</span>, {totalTime} aproximadamente
                         </p>
                     </div>
                 </div>

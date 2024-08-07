@@ -17,34 +17,37 @@ const Time = () => (
 );
 
 const ItemsTable = ({ songs, playlist_id }) => {
-    const { currentMusic, isPlaying, setIsPlaying, setCurrentMusic } = usePlayerStore(state => state)
+    const { currentMusic, isPlaying, setIsPlaying, setCurrentMusic, currentIndex, setCurrentIndex } = usePlayerStore(state => state)
     const isPlayingPlayList = isPlaying && currentMusic?.playlist.id === playlist_id ;
 
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const handleMouseEnter = (index) => () => setHoveredIndex(index);
     const handleMouseLeave = () => setHoveredIndex(null);
 
-    const handleClick = (song_id) =>{
-        if(isPlayingPlayList){
-            if(song_id == currentMusic.song?.id){
-                setIsPlaying(false)
-                return 
-            }
+    const handleClick = (song_id, index) => {
+      console.log(isPlayingPlayList)
+      if (isPlayingPlayList) {
+        if (song_id == currentMusic.song?.id) {
+          setIsPlaying(false);
+          return;
         }
-
+      }else{
         fetch(`/api/get-info-playlist.json?id=${playlist_id}`)
-            .then(res => res.json())
-            .then(data =>{
-                const { songs, playlist } = data
-                setIsPlaying(true)
-                setCurrentMusic({ songs, playlist, song: songs.find(song => song.id === song_id) })
-            })
-    }
+          .then(res => res.json())
+          .then(data => {
+            const { songs, playlist } = data;
+            setIsPlaying(true);
+            setCurrentMusic({ songs, playlist, song: songs.find(song => song.id === song_id) });
+            setCurrentIndex(index);
+          });
+      }
+    };
+  
 
     return (    
         songs.map((song, index) => (
             <tr
-              onClick={() => handleClick(song.id)}
+              onClick={() => handleClick(song.id, index)}
               onMouseEnter={handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
               className="text-gray-300 text-sm font-light hover:bg-white/10 rounded-lg transition duration-300"

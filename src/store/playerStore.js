@@ -4,7 +4,9 @@ export const usePlayerStore = create((set) =>({
     isPlaying: false,
     currentMusic: { playlist: null, song: null, songs: [] },
     volume: 1,
+    currentIndex: 0,
     setVolume: (volume) => set({ volume }),
     setIsPlaying: (isPlaying) => set({ isPlaying }),
-    setCurrentMusic: (currentMusic) => set({ currentMusic })
+    setCurrentMusic: (currentMusic) => set({ currentMusic }),
+    setCurrentIndex: (index) => set({ currentIndex: index })
 }))
