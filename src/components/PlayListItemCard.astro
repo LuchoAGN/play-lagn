@@ -1,6 +1,6 @@
 ---
 import type { Playlist } from "@/lib/data";
-import { CardPlayButtom } from "./react/CardPlayButtom";
+import { CardPlayButton } from "./react/CardPlayButton";
 import { Image } from "astro:assets";
 
 interface Props {
@@ -12,12 +12,16 @@ const { id, cover, title, artists, color } = playlist;
 
 const artisString = artists.join(", ");
 ---
-<article class="group relative hover:bg-zinc-800 shadow-lg hover:shadow-xl bg-zinc-500/30 rounded-md 
-  transition-all duration-300">
 
-  <div class=`absolute right-4 bottom-20 translate-y-4 transition-all 
-    duration-500 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 z-10` >
-    <CardPlayButtom id={id} client:visible />
+<article
+  class="group relative hover:bg-zinc-800 shadow-lg hover:shadow-xl bg-zinc-500/30 rounded-md
+  transition-all duration-300"
+>
+  <div
+    class=`absolute right-4 bottom-20 translate-y-4 transition-all 
+    duration-500 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 z-10`
+  >
+    <CardPlayButton id={id} client:visible />
   </div>
 
   <a
@@ -31,7 +35,7 @@ const artisString = artists.join(", ");
         alt=`Cover of ${title} by ${artisString}`
         class="object-cover w-full h-full rounded-md"
         transition:name=`playlist ${id} image`
-        inferSize={true} 
+        inferSize={true}
         loading="eager"
       />
     </picture>
@@ -40,10 +44,12 @@ const artisString = artists.join(", ");
       <h4 class="text-white text-sm" transition:name=`playlist ${id} title`>
         {title}
       </h4>
-      <span class="text-xs text-gray-400" transition:name=`playlist ${id} artists`>
+      <span
+        class="text-xs text-gray-400"
+        transition:name=`playlist ${id} artists`
+      >
         {artisString}
       </span>
     </div>
   </a>
 </article>
-

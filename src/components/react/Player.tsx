@@ -2,7 +2,11 @@ import { usePlayerStore } from "@/store/playerStore";
 import { useEffect, useRef, useState } from "react";
 import { Slider } from "../Slider";
 
-export const Pause = ({ className }) => (
+interface IconProps {
+  className?: string;
+}
+
+export const Pause = ({ className }: IconProps) => (
   <svg
     className={className}
     role="img"
@@ -16,7 +20,7 @@ export const Pause = ({ className }) => (
   </svg>
 );
 
-export const Play = ({ className }) => (
+export const Play = ({ className }: IconProps) => (
   <svg
     className={className}
     role="img"
@@ -30,7 +34,7 @@ export const Play = ({ className }) => (
   </svg>
 );
 
-export const Next = ({ className }) => (
+export const Next = ({ className }: IconProps) => (
   <svg
     className={className}
     role="img"
@@ -44,7 +48,7 @@ export const Next = ({ className }) => (
   </svg>
 );
 
-export const Previous = ({ className }) => (
+export const Previous = ({ className }: IconProps) => (
   <svg
     className={className}
     role="img"
@@ -86,7 +90,13 @@ export const Volume = () => (
   </svg>
 );
 
-const CurrentSong = ({ image, title, artists }) => {
+interface CurrentSongProps {
+  image: string;
+  title: string;
+  artists: string[];
+}
+
+const CurrentSong = ({ image, title, artists }: CurrentSongProps) => {
   return (
     <div className="flex items-center gap-5 relative overflow-hidden">
       <picture className="w-16 h-16 bg-zinc-800 rounded-md shadow-lg overflow-hidden">
@@ -103,21 +113,25 @@ const CurrentSong = ({ image, title, artists }) => {
   );
 };
 
-const SongControl = ({ audio }) => {
+interface SongControlProps {
+  audio: React.RefObject<HTMLAudioElement>;
+}
+
+const SongControl = ({ audio }: SongControlProps) => {
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
-    audio.current.addEventListener("timeupdate", handleTimeUpdate);
-    return () => {
-      audio.current.removeEventListener("timeupdate", handleTimeUpdate);
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.current?.currentTime || 0);
     };
-  }, []);
 
-  const handleTimeUpdate = () => {
-    setCurrentTime(audio.current.currentTime);
-  };
+    audio.current?.addEventListener("timeupdate", handleTimeUpdate);
+    return () => {
+      audio.current?.removeEventListener("timeupdate", handleTimeUpdate);
+    };
+  }, [audio]);
 
-  const formatTime = (time) => {
+  const formatTime = (time: number | null) => {
     if (time == null) return `0:00`;
 
     const seconds = Math.floor(time % 60);
@@ -125,7 +139,8 @@ const SongControl = ({ audio }) => {
 
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
-  const duration = audio?.current?.duration ?? 0;
+
+  const duration = audio.current?.duration ?? 0;
 
   return (
     <div className="flex gap-x-3 text-white text-xs pt-2">
@@ -136,11 +151,11 @@ const SongControl = ({ audio }) => {
       <Slider
         defaultValue={[0]}
         value={[currentTime]}
-        max={audio?.current?.duration ?? 0}
+        max={duration}
         min={0}
         className="w-[400px]"
         onValueChange={(value) => {
-          audio.current.currentTime = value;
+          audio.current!.currentTime = value[0];
         }}
       />
 
@@ -194,16 +209,20 @@ const VolumeControl = () => {
 };
 
 export function Player() {
-  const { currentMusic, isPlaying, setIsPlaying, volume, currentIndex, setCurrentIndex } = usePlayerStore(
-    (state) => state
-  );
-  const audioRef = useRef();
+  const {
+    currentMusic,
+    isPlaying,
+    setIsPlaying,
+    volume,
+    currentIndex,
+    setCurrentIndex,
+  } = usePlayerStore((state) => state);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const { playlist, songs } = currentMusic;
 
   useEffect(() => {
     if (songs && songs.length > 0) {
-      console.log(currentIndex)
       const currentSong = songs[currentIndex];
       const src = `/music/${playlist?.id}/0${currentSong?.id}.mp3`;
       const audio = audioRef.current;
@@ -230,9 +249,9 @@ export function Player() {
 
   const handlePlayPause = () => {
     if (isPlaying) {
-      audioRef.current.pause();
+      audioRef.current?.pause();
     } else {
-      audioRef.current.play();
+      audioRef.current?.play();
     }
     setIsPlaying(!isPlaying);
   };
@@ -259,16 +278,16 @@ export function Player() {
         setIsPlaying(false); // Optional: Stop playing at the end of the playlist
       }
     };
-    audio.addEventListener('ended', handleEnded);
+    audio?.addEventListener("ended", handleEnded);
 
     return () => {
-      audio.removeEventListener('ended', handleEnded);
+      audio?.removeEventListener("ended", handleEnded);
     };
   }, [currentIndex, songs.length, setIsPlaying]);
 
   return (
     <div className="flex flex-row justify-between w-full pl-2 pr-4 z-50">
-      <div className="w-[200]">
+      <div className="w-[200px]">
         <CurrentSong {...songs[currentIndex]} />
       </div>
       <div className="grid place-content-center gap-4 flex-1">
@@ -280,13 +299,16 @@ export function Player() {
             >
               <Previous />
             </button>
-            <button 
+            <button
               className="bg-white rounded-full p-2"
               onClick={handlePlayPause}
             >
               {isPlaying ? <Pause /> : <Play />}
             </button>
-            <button className="text-white rounded-full p-2 px-8" onClick={handleNext}>
+            <button
+              className="text-white rounded-full p-2 px-8"
+              onClick={handleNext}
+            >
               <Next />
             </button>
           </div>
