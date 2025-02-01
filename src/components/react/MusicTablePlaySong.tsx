@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { Pause, Play } from "./Player";
 import { usePlayerStore } from "@/store/playerStore";
-
-interface Song {
-  id: string;
-  image: string;
-  title: string;
-  artists: string[];
-  album: string;
-  duration: string;
-}
+import { type Song } from "@/lib/data";
 
 interface ItemsTableProps {
   songs: Song[];
@@ -46,7 +38,7 @@ const ItemsTable = ({ songs, playlist_id }: ItemsTableProps) => {
   const handleMouseEnter = (index: number) => () => setHoveredIndex(index);
   const handleMouseLeave = () => setHoveredIndex(null);
 
-  const handleClick = (song_id: string, index: number) => {
+  const handleClick = (song_id: number, index: number) => {
     if (isPlayingPlayList) {
       if (song_id == currentMusic.song?.id) {
         setIsPlaying(false);
